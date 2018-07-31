@@ -187,6 +187,9 @@ System::Void SettingForm::button_sett_delete_Click(System::Object^  sender, Syst
 	listBox_sett_data->Items->RemoveAt(buffIndex);
 	listBox_sett_safe->Items->RemoveAt(buffIndex);
 
+	dataStack.erase(dataStack.begin() + buffIndex);
+	safeStack.erase(safeStack.begin() + buffIndex);
+
 	StreamWriter^ writeFile = gcnew StreamWriter(Application::StartupPath + "\\config.ds", false);
 	for (int iter = 0; iter < listBox_sett_data->Items->Count; iter++)
 	{
