@@ -140,45 +140,18 @@ System::Void SettingForm::button_sett_delete_Click(System::Object^  sender, Syst
 		if (delType == '+' || delType == '\\' || delType == '/')
 		{
 			System::IO::DirectoryInfo dirInfo(listBox_sett_safe->SelectedItem->ToString());
-			if (!dirInfo.Exists)
-			{
-				MessageBox::Show("Directory \"" + listBox_sett_safe->SelectedItem->ToString() + "\" not exist!", "Error",
-					System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
-				panel_wait->Visible = false;
-				return;
-			}
-			if (delType == '+')
+			if (dirInfo.Exists)
 			{
 				dirInfo.Delete(true);
-			}
-			else
-			{
-				array <System::IO::DirectoryInfo^, 1>^ arrayDir;
-				arrayDir = dirInfo.GetDirectories();
-				if (arrayDir->Length.ToString())
-				{
-					array <System::IO::FileInfo^, 1>^ arrayFile;
-					arrayFile = dirInfo.GetFiles();
-					for (int iter = 0; iter < arrayFile->Length; iter++)
-						System::IO::File::Delete(arrayFile[iter]->FullName);
-				}
-				else
-				{
-					dirInfo.Delete(true);
-				}
 			}
 		}
 		else
 		{
 			System::IO::FileInfo fileInfo(listBox_sett_safe->SelectedItem->ToString());
-			if(!fileInfo.Exists)
+			if(fileInfo.Exists)
 			{
-				MessageBox::Show("File \"" + listBox_sett_safe->SelectedItem->ToString() + "\" not exist!", "Error",
-					System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
-				panel_wait->Visible = false;
-				return;
+				fileInfo.Delete();
 			}
-			fileInfo.Delete();
 		}
 		panel_wait->Visible = false;
 	}
@@ -230,6 +203,13 @@ System::Void SettingForm::button_sett_addFile_Click(System::Object^  sender, Sys
 	if (openFileDialog_sett_sellect->FileNames[0] == safeDirect + openFileDialog_sett_sellect->SafeFileNames[0])
 	{
 		MessageBox::Show("One folder cannot be used for Data and Safe!", "Error",
+			System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
+		return;
+	}
+
+	if (checkStack(safeDirect, safeStack))
+	{
+		MessageBox::Show("Selected folder already using as Safe!", "Error",
 			System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
 		return;
 	}
