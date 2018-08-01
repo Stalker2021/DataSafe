@@ -160,7 +160,7 @@ namespace DataSafe {
 			this->button_sett_back->Name = L"button_sett_back";
 			this->button_sett_back->Size = System::Drawing::Size(72, 23);
 			this->button_sett_back->TabIndex = 2;
-			this->button_sett_back->Text = L"Back";
+			this->button_sett_back->Text = L"Done";
 			this->button_sett_back->UseVisualStyleBackColor = true;
 			this->button_sett_back->Click += gcnew System::EventHandler(this, &SettingForm::button_sett_back_Click);
 			// 

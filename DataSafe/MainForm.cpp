@@ -44,12 +44,12 @@ System::Void MainForm::button_check_Click(System::Object^  sender, System::Event
 	if (checkSize->isRun())
 	{
 		checkSize->stopProcess();
-		label_processSize->Text = "0 / 0 (MB)";
+		label_processSize->Text = "0 / 0 files";
 	}
 
 	if (checkSize->getSize())
 	{
-		progressBar->Maximum = (int)(checkSize->getSize() * 100.0);
+		progressBar->Maximum = checkSize->getSize();
 		progressBar->Value = 0;
 	}
 	else
@@ -223,14 +223,19 @@ System::Void MainForm::checkDifferences()
 
 				if (checkSize->getSize())
 				{
-					progressBar->Value += (int)(dataDirInfo->GetFiles()[iter]->Length / 1024.0 / 1024.0 * 100.0);
-					label_processSize->Text = ((double)progressBar->Value / 100.0).ToString("F2") + " / " + checkSize->getSize().ToString("F2") + " (MB)";
+					if (progressBar->Maximum < progressBar->Value + 1)
+						progressBar->Maximum++;
+					progressBar->Value++;
+					label_processSize->Text = progressBar->Value.ToString( ) + " / " + progressBar->Maximum.ToString( ) + " files";
 				}
 			}
 
 			// #UPADATE_1.1: Back Checking (from Safe to Data)
+			label_back_check->Text = "<-- back check";
 			for (int iter = 0; iter < safeDirInfo->GetFiles()->Length; iter++)
 			{
+				label_file_names->Text = safeDirInfo->GetFiles()[iter]->ToString( );
+
 				if (!System::IO::File::Exists(dataDirInfo->ToString() + safeDirInfo->GetFiles()[iter]))
 				{
 					if (checkBox_recoverAll->Checked)
@@ -250,6 +255,8 @@ System::Void MainForm::checkDifferences()
 					//MessageBox::Show("#UPDATE_1" + "\n" + dataDirInfo->ToString() + safeDirInfo->GetFiles()[iter] + "\n" + safeDirInfo->ToString() + safeDirInfo->GetFiles()[iter]);
 				}
 			}
+			label_file_names->Text = "";
+			label_back_check->Text = "";
 		}
 		else if (buffType == '+')
 		{
@@ -307,8 +314,10 @@ System::Void MainForm::checkDifferences()
 
 			if (checkSize->getSize())
 			{
-				progressBar->Value += (int)(dataFileInfo->Length / 1024.0 / 1024.0 * 100.0);
-				label_processSize->Text = ((double)progressBar->Value / 100.0).ToString("F2") + " / " + checkSize->getSize().ToString("F2") + " (MB)";
+				if (progressBar->Maximum < progressBar->Value + 1)
+					progressBar->Maximum++;
+				progressBar->Value++;
+				label_processSize->Text = progressBar->Value.ToString( ) + " / " + progressBar->Maximum.ToString( ) + " files";
 			}
 		}
 	}
@@ -318,7 +327,7 @@ System::Void MainForm::checkDifferences()
 
 	label_process->Text = "Checking Done!";
 	progressBar->Value = progressBar->Maximum;
-	label_processSize->Text = checkSize->getSize().ToString("F2") + " / " + checkSize->getSize().ToString("F2") + " (MB)";
+	label_processSize->Text = progressBar->Value.ToString( ) + " / " + progressBar->Maximum.ToString( ) + " files";
 	button_edit->Enabled = true;
 	button_check->Enabled = true;
 }
@@ -385,15 +394,19 @@ System::Void MainForm::checkSubFolderDifferences(System::String^ dataPath, Syste
 
 		if (checkSize->getSize())
 		{
-			progressBar->Value += (int)(dataDirInfo.GetFiles()[iter]->Length / 1024.0 / 1024.0 * 100.0);
-			label_processSize->Text = ((double)progressBar->Value / 100.0).ToString("F2") + " / " + checkSize->getSize().ToString("F2") + " (MB)";
+			if (progressBar->Maximum < progressBar->Value + 1)
+				progressBar->Maximum++;
+			progressBar->Value++;
+			label_processSize->Text = progressBar->Value.ToString( ) + " / " + progressBar->Maximum.ToString( ) + " files";
 		}
 	}
 
 	// #UPADATE_1.1: Back Checking (from Safe to Data)
+	label_back_check->Text = "<-- back check";
 	System::IO::DirectoryInfo safeDirInfo(safePath);
 	for (int iter = 0; iter < safeDirInfo.GetFiles()->Length; iter++)
 	{
+		label_file_names->Text = safeDirInfo.GetFiles()[iter]->ToString();
 		if (!System::IO::File::Exists(dataDirInfo.ToString() + safeDirInfo.GetFiles()[iter]))
 		{
 			if (checkBox_recoverAll->Checked)
@@ -413,6 +426,8 @@ System::Void MainForm::checkSubFolderDifferences(System::String^ dataPath, Syste
 			//MessageBox::Show("#UPDATE_2" + "\n" + dataDirInfo.ToString() + safeDirInfo.GetFiles()[iter]->Name + "\n" + safeDirInfo.GetFiles()[iter]->FullName);
 		}
 	}
+	label_file_names->Text = "";
+	label_back_check->Text = "";
 }
 
 System::Void MainForm::button_eventData_Click(System::Object^  sender, System::EventArgs^  e)

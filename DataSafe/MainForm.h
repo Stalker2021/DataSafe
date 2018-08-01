@@ -63,6 +63,8 @@ namespace DataSafe {
 	private: System::Windows::Forms::Label^  label_safeChanges;
 	private: System::Windows::Forms::CheckBox^  checkBox_replaceAll;
 	private: System::Windows::Forms::CheckBox^  checkBox_recoverAll;
+	private: System::Windows::Forms::Label^  label_file_names;
+	private: System::Windows::Forms::Label^  label_back_check;
 
 
 	private:
@@ -99,6 +101,8 @@ namespace DataSafe {
 			this->button_skip = (gcnew System::Windows::Forms::Button());
 			this->checkBox_replaceAll = (gcnew System::Windows::Forms::CheckBox());
 			this->checkBox_recoverAll = (gcnew System::Windows::Forms::CheckBox());
+			this->label_file_names = (gcnew System::Windows::Forms::Label());
+			this->label_back_check = (gcnew System::Windows::Forms::Label());
 			this->panel_data->SuspendLayout();
 			this->panel_safe->SuspendLayout();
 			this->SuspendLayout();
@@ -246,7 +250,7 @@ namespace DataSafe {
 			this->label_processSize->Name = L"label_processSize";
 			this->label_processSize->Size = System::Drawing::Size(312, 13);
 			this->label_processSize->TabIndex = 4;
-			this->label_processSize->Text = L"0/0 (MB)";
+			this->label_processSize->Text = L"0/0 files";
 			this->label_processSize->TextAlign = System::Drawing::ContentAlignment::TopRight;
 			// 
 			// label_process
@@ -255,7 +259,7 @@ namespace DataSafe {
 			this->label_process->Name = L"label_process";
 			this->label_process->Size = System::Drawing::Size(306, 13);
 			this->label_process->TabIndex = 4;
-			this->label_process->Text = L"Waiting...";
+			this->label_process->Text = L"Ready...";
 			this->label_process->TextAlign = System::Drawing::ContentAlignment::TopCenter;
 			// 
 			// checkBox_addAll
@@ -321,11 +325,29 @@ namespace DataSafe {
 			this->checkBox_recoverAll->Text = L"recover all lost files";
 			this->checkBox_recoverAll->UseVisualStyleBackColor = true;
 			// 
+			// label_file_names
+			// 
+			this->label_file_names->Location = System::Drawing::Point(11, 144);
+			this->label_file_names->Name = L"label_file_names";
+			this->label_file_names->Size = System::Drawing::Size(230, 13);
+			this->label_file_names->TabIndex = 9;
+			this->label_file_names->TextAlign = System::Drawing::ContentAlignment::TopRight;
+			// 
+			// label_back_check
+			// 
+			this->label_back_check->Location = System::Drawing::Point(244, 144);
+			this->label_back_check->Name = L"label_back_check";
+			this->label_back_check->Size = System::Drawing::Size(79, 13);
+			this->label_back_check->TabIndex = 10;
+			this->label_back_check->TextAlign = System::Drawing::ContentAlignment::TopRight;
+			// 
 			// MainForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(336, 335);
+			this->Controls->Add(this->label_back_check);
+			this->Controls->Add(this->label_file_names);
 			this->Controls->Add(this->checkBox_replaceAll);
 			this->Controls->Add(this->button_skip);
 			this->Controls->Add(this->button_eventSafe);

@@ -8,7 +8,7 @@ public:
 	bool isRun();
 	void startProcess();
 	void stopProcess();
-	double getSize();
+	unsigned long long int getSize();
 
 	CheckSize(System::IO::StreamReader^ config, System::Windows::Forms::Label^ lable);
 
@@ -17,7 +17,7 @@ private:
 	System::Windows::Forms::Label^ sizeLable = nullptr;
 	System::IO::StreamReader^ configFile = nullptr;
 	bool inProgress = false;
-	double size = 0.0;
+	unsigned long long int counter = 0;
 
 	void checkDataSize();
 	void checkSubFolderSize(System::String^ checkPath);

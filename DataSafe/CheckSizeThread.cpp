@@ -33,11 +33,9 @@ void CheckSize::checkDataSize()
 					System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
 				return;
 			}
-			for (int iter = 0; iter < dirInfo->GetFiles()->Length; iter++)
-			{
-				size += double(dirInfo->GetFiles()[iter]->Length) / 1024.0 / 1024.0;
-				putLableTextSize();
-			}
+
+			counter += dirInfo->GetFiles()->Length;
+			putLableTextSize();
 		}
 		else if (buffType == '+')
 		{
@@ -60,7 +58,7 @@ void CheckSize::checkDataSize()
 					System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
 				return;
 			}
-			size += double(fileInfo->Length) / 1024.0 / 1024.0;
+			counter++;
 			putLableTextSize();
 		}
 		configFile->ReadLine();
@@ -79,7 +77,7 @@ void CheckSize::startProcess()
 {
 	if (!sizeLable || !configFile)
 		return;
-	size = 0.0;
+	counter = 0;
 
 	checkDataSizeThread = gcnew Thread(gcnew System::Threading::ThreadStart(this, &CheckSize::checkDataSize));
 	checkDataSizeThread->Start();
@@ -89,7 +87,7 @@ void CheckSize::stopProcess()
 {
 	inProgress = false;
 	checkDataSizeThread->Abort();
-	size = 0.0;
+	counter = 0;
 }
 
 void CheckSize::checkSubFolderSize(System::String^ checkPath)
@@ -102,22 +100,19 @@ void CheckSize::checkSubFolderSize(System::String^ checkPath)
 	for (int iter = 0; iter < dirInfo.GetDirectories()->Length; iter++)
 		checkSubFolderSize(dirInfo.ToString() + dirInfo.GetDirectories()[iter]->ToString() + "\\");
 
-	for (int iter = 0; iter < dirInfo.GetFiles()->Length; iter++)
-	{
-		size += double(dirInfo.GetFiles()[iter]->Length) / 1024.0 / 1024.0;
-		putLableTextSize();
-	}
+	counter += dirInfo.GetFiles()->Length;
+	putLableTextSize();
 }
 
 void CheckSize::putLableTextSize()
 {
 	if (inProgress)
-		sizeLable->Text = "Calculation: " + size.ToString("F2") + " (MB)";
+		sizeLable->Text = "Calculation: " + counter.ToString( ) + " files";
 	else
-		sizeLable->Text = "0,00 / " + size.ToString("F2") + " (MB)";
+		sizeLable->Text = "0 / " + counter.ToString( ) + " files";
 }
 
-double CheckSize::getSize()
+unsigned long long int CheckSize::getSize()
 {
-	return size;
+	return counter;
 }
