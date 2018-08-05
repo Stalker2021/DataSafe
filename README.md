@@ -1,7 +1,7 @@
 DataSafe
 
-OLD VisualStudio project (~2011) on .NET Framework with C++/CLI
-It has many serious flaw, from code style to architecture.
+OLD VisualStudio project (~2011) on .NET Framework with C++/CLI  
+It has many serious flaw, from code style to architecture.  
 It placed on GitHub for little support and teaching of using GitHub.
 
 Capabilities:
