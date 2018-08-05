@@ -252,6 +252,7 @@ namespace DataSafe {
 			this->label_processSize->TabIndex = 4;
 			this->label_processSize->Text = L"0/0 files";
 			this->label_processSize->TextAlign = System::Drawing::ContentAlignment::TopRight;
+			this->label_processSize->MouseDoubleClick += gcnew System::Windows::Forms::MouseEventHandler(this, &MainForm::label_processSize_MouseDoubleClick);
 			// 
 			// label_process
 			// 
@@ -397,5 +398,6 @@ namespace DataSafe {
 	private: System::Void eventButtonsEnable(System::IO::FileInfo^ dataFile, System::IO::FileInfo^ safeFile);
 	private: System::Void checkDifferences();
 	private: System::Void checkSubFolderDifferences(System::String^ dataPath, System::String^ safePath);
+	private: System::Void label_processSize_MouseDoubleClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e);
 };
 }

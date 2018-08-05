@@ -441,6 +441,21 @@ System::Void MainForm::checkSubFolderDifferences(System::String^ dataPath, Syste
 	label_back_check->Text = "";
 }
 
+System::Void MainForm::label_processSize_MouseDoubleClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e)
+{
+	if ("Processing..." == label_process->Text)
+		return;
+
+	if (checkSize->isRun())
+		checkSize->stopProcess();
+
+	readFile->Close();
+	readFile = gcnew StreamReader(Application::StartupPath + "\\config.ds");
+	checkSize = gcnew CheckSize(readFile, label_processSize);
+
+	checkSize->startProcess();
+}
+
 System::Void MainForm::button_eventData_Click(System::Object^  sender, System::EventArgs^  e)
 {
 	String^ safeFile = label_safeName->Text->ToString()->Remove(0, 6);
