@@ -379,6 +379,8 @@ namespace DataSafe {
 	private: System::IO::StreamReader^ readFile;
 			 CheckSize^ checkSize;
 			 System::Threading::Thread^ checkDifferentThread = nullptr;
+			 System::Media::SoundPlayer^ sound_differenceFound = nullptr;
+			 System::Media::SoundPlayer^ sound_checkingDone = nullptr;
 
 	private: System::Void MainForm_Load(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void button_edit_Click(System::Object^  sender, System::EventArgs^  e);
@@ -389,13 +391,11 @@ namespace DataSafe {
 	private: System::Void button_skip_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void panel_data_DoubleClick(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void panel_safe_DoubleClick(System::Object^  sender, System::EventArgs^  e);
-	
 	private: System::Void eventButtonsDisable();
 	private: System::Void eventButtonsEnable(System::IO::FileInfo^ dataFile, System::String^ safePath);
 	private: System::Void eventButtonsEnable(System::String^ dataPath, System::IO::FileInfo^ safeFile);
 	private: System::Void eventButtonsEnable(System::IO::FileInfo^ dataFile, System::IO::FileInfo^ safeFile);
 	private: System::Void checkDifferences();
 	private: System::Void checkSubFolderDifferences(System::String^ dataPath, System::String^ safePath);
-
 };
 }

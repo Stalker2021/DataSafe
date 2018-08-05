@@ -7,9 +7,16 @@ using System::Windows::Forms::MessageBox;
 using System::IO::StreamReader;
 using System::IO::StreamWriter;
 using System::IO::File;
+using System::Media::SoundPlayer;
 
 System::Void MainForm::MainForm_Load(System::Object^  sender, System::EventArgs^  e) {
 	label_processSize->CheckForIllegalCrossThreadCalls = false;
+
+	if (File::Exists(Application::StartupPath + "\\difference_found.wav"))
+		sound_differenceFound = gcnew SoundPlayer(Application::StartupPath + "\\difference_found.wav");
+
+	if (File::Exists(Application::StartupPath + "\\checking_done.wav"))
+		sound_checkingDone = gcnew SoundPlayer(Application::StartupPath + "\\checking_done.wav");
 
 	if (!File::Exists(Application::StartupPath + "\\config.ds"))
 	{
@@ -47,16 +54,8 @@ System::Void MainForm::button_check_Click(System::Object^  sender, System::Event
 		label_processSize->Text = "0 / 0 files";
 	}
 
-	if (checkSize->getSize())
-	{
-		progressBar->Maximum = checkSize->getSize();
-		progressBar->Value = 0;
-	}
-	else
-	{
-		progressBar->Maximum = 2;
-		progressBar->Value = 1;
-	}
+	progressBar->Maximum = (int)( checkSize->getSize() );
+	progressBar->Value = 0;
 
 	readFile->Close();
 
@@ -106,6 +105,9 @@ System::Void MainForm::eventButtonsEnable(System::IO::FileInfo^ dataFile, System
 	label_safeSize->Text = "Size:";
 	label_safeChanges->Text = "Change:";
 	label_safeName->Text = "Name: " + safePath + dataFile->Name;
+
+	if(nullptr != sound_differenceFound)
+		sound_differenceFound->Play();
 }
 
 // #UPADATE_1.1: Back Checking (from Safe to Data)
@@ -125,6 +127,9 @@ System::Void MainForm::eventButtonsEnable(System::String^ dataPath, System::IO::
 	label_safeSize->Text = "Size: " + safeFile->Length.ToString();
 	label_safeChanges->Text = "Change: " + safeFile->LastWriteTime.ToString();
 	label_safeName->Text = "Name: " + safeFile->FullName;
+
+	if (nullptr != sound_differenceFound)
+		sound_differenceFound->Play();
 }
 
 System::Void MainForm::eventButtonsEnable(System::IO::FileInfo^ dataFile, System::IO::FileInfo^ safeFile)
@@ -144,6 +149,9 @@ System::Void MainForm::eventButtonsEnable(System::IO::FileInfo^ dataFile, System
 	label_safeSize->Text = "Size: " + safeFile->Length.ToString();
 	label_safeChanges->Text = "Change: " + safeFile->LastWriteTime.ToString();
 	label_safeName->Text = "Name: " + safeFile->FullName;
+
+	if (nullptr != sound_differenceFound)
+		sound_differenceFound->Play();
 }
 
 System::Void MainForm::checkDifferences()
@@ -330,6 +338,9 @@ System::Void MainForm::checkDifferences()
 	label_processSize->Text = progressBar->Value.ToString( ) + " / " + progressBar->Maximum.ToString( ) + " files";
 	button_edit->Enabled = true;
 	button_check->Enabled = true;
+
+	if(nullptr != sound_checkingDone)
+		sound_checkingDone->Play();
 }
 
 System::Void MainForm::checkSubFolderDifferences(System::String^ dataPath, System::String^ safePath)
