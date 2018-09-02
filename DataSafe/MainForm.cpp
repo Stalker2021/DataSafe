@@ -41,6 +41,8 @@ System::Void MainForm::button_edit_Click(System::Object^  sender, System::EventA
 	settingWindow->ShowDialog();
 
 	MainForm::Location = settingWindow->startPoint;
+	label_process->Text = LABEL_READY;
+	progressBar->Value = 0;
 	readFile = gcnew StreamReader(Application::StartupPath + FILE_CONFIG);
 	checkSize = gcnew CheckSize(readFile, label_processSize);
 	checkSize->startProcess();

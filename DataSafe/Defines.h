@@ -18,6 +18,7 @@
 #define LABEL_PRICESSING		"Processing..."
 #define LABEL_BACK_CHECK		"<-- back check"
 #define LABEL_CHECK_DONE		"Checking Done!"
+#define LABEL_READY				"Ready..."
 
 #define LABEL_CALCUL( X )		"Calculation: " + X + " files"
 #define LABEL_CALCUL_RES( X )	"0 / " + X + " files"
