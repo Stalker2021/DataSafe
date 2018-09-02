@@ -1,7 +1,6 @@
 #pragma once
 
 #include "CheckSizeThread.h"
-#include "DifferentFinder.h"
 
 namespace DataSafe {
 
@@ -38,7 +37,6 @@ namespace DataSafe {
 			}
 		}
 	private: System::Windows::Forms::Button^  button_check;
-	protected:
 	private: System::Windows::Forms::Button^  button_edit;
 	private: System::Windows::Forms::ProgressBar^  progressBar;
 	private: System::Windows::Forms::Panel^  panel_data;
@@ -49,14 +47,10 @@ namespace DataSafe {
 	private: System::Windows::Forms::Button^  button_eventData;
 	private: System::Windows::Forms::Button^  button_eventSafe;
 	private: System::Windows::Forms::Label^  label_dataName;
-
 	private: System::Windows::Forms::Label^  label_dataSize;
 	private: System::Windows::Forms::Label^  label_data;
 	private: System::Windows::Forms::Label^  label_safeName;
-
 	private: System::Windows::Forms::Label^  label_safeSize;
-
-
 	private: System::Windows::Forms::Label^  label_Safe;
 	private: System::Windows::Forms::Button^  button_skip;
 	private: System::Windows::Forms::Label^  label_dataChanges;

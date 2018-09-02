@@ -39,29 +39,18 @@ namespace DataSafe {
 			}
 		}
 	private: System::Windows::Forms::ListBox^  listBox_sett_data;
-	protected:
-
 	private: System::Windows::Forms::Label^  label_sett_data;
 	private: System::Windows::Forms::ListBox^  listBox_sett_safe;
 	private: System::Windows::Forms::Label^  label_sett_safe;
 	private: System::Windows::Forms::Button^  button_sett_addFile;
 	private: System::Windows::Forms::Button^  button_sett_addFolder;
 	private: System::Windows::Forms::Button^  button_sett_back;
-
-
-
 	private: System::Windows::Forms::Button^  button_sett_delete;
 	private: System::Windows::Forms::FolderBrowserDialog^  folderBrowserDialog_sett_select;
 	private: System::Windows::Forms::OpenFileDialog^  openFileDialog_sett_sellect;
 	private: System::Windows::Forms::Panel^  panel_wait;
 	private: System::Windows::Forms::Label^  label_wait;
-
 	private: System::ComponentModel::IContainer^  components;
-
-
-
-
-	protected:
 
 	private:
 		/// <summary>
@@ -244,7 +233,6 @@ namespace DataSafe {
 	private: System::Void button_sett_addFolder_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void button_sett_delete_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void button_sett_addFile_Click(System::Object^  sender, System::EventArgs^  e);
-
 	private: bool checkStack(System::String^ item, vector<System::String^> stack);
 };
 }

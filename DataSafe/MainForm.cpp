@@ -1,5 +1,6 @@
 #include "MainForm.h"
 #include "SettingForm.h"
+#include "Defines.h"
 
 using DataSafe::MainForm;
 using DataSafe::SettingForm;
@@ -12,18 +13,18 @@ using System::Media::SoundPlayer;
 System::Void MainForm::MainForm_Load(System::Object^  sender, System::EventArgs^  e) {
 	label_processSize->CheckForIllegalCrossThreadCalls = false;
 
-	if (File::Exists(Application::StartupPath + "\\difference_found.wav"))
-		sound_differenceFound = gcnew SoundPlayer(Application::StartupPath + "\\difference_found.wav");
+	if (File::Exists(Application::StartupPath + FILE_SOUND_DIFFER_FOUND))
+		sound_differenceFound = gcnew SoundPlayer(Application::StartupPath + FILE_SOUND_DIFFER_FOUND);
 
-	if (File::Exists(Application::StartupPath + "\\checking_done.wav"))
-		sound_checkingDone = gcnew SoundPlayer(Application::StartupPath + "\\checking_done.wav");
+	if (File::Exists(Application::StartupPath + FILE_SOUND_CHECK_DONE))
+		sound_checkingDone = gcnew SoundPlayer(Application::StartupPath + FILE_SOUND_CHECK_DONE);
 
-	if (!File::Exists(Application::StartupPath + "\\config.ds"))
+	if (!File::Exists(Application::StartupPath + FILE_CONFIG))
 	{
-		StreamWriter^ writeFile = gcnew StreamWriter(Application::StartupPath + "\\config.ds");
+		StreamWriter^ writeFile = gcnew StreamWriter(Application::StartupPath + FILE_CONFIG);
 		writeFile->Close();
 	}
-	readFile = gcnew StreamReader(Application::StartupPath + "\\config.ds");
+	readFile = gcnew StreamReader(Application::StartupPath + FILE_CONFIG);
 
 	checkSize = gcnew CheckSize(readFile, label_processSize);
 	checkSize->startProcess();
@@ -40,7 +41,7 @@ System::Void MainForm::button_edit_Click(System::Object^  sender, System::EventA
 	settingWindow->ShowDialog();
 
 	MainForm::Location = settingWindow->startPoint;
-	readFile = gcnew StreamReader(Application::StartupPath + "\\config.ds");
+	readFile = gcnew StreamReader(Application::StartupPath + FILE_CONFIG);
 	checkSize = gcnew CheckSize(readFile, label_processSize);
 	checkSize->startProcess();
 	MainForm::Visible = true;
@@ -51,7 +52,7 @@ System::Void MainForm::button_check_Click(System::Object^  sender, System::Event
 	if (checkSize->isRun())
 	{
 		checkSize->stopProcess();
-		label_processSize->Text = "0 / 0 files";
+		label_processSize->Text = PROCESS_CLEAR;
 	}
 
 	progressBar->Maximum = (int)( checkSize->getSize() );
@@ -80,31 +81,31 @@ System::Void MainForm::eventButtonsDisable()
 	panel_data->Enabled = false;
 	panel_safe->Enabled = false;
 
-	label_dataSize->Text = "Size:";
-	label_dataChanges->Text = "Change:" ;
-	label_dataName->Text = "Name:";
+	label_dataSize->Text = LABEL_CHAPTER_SIZE;
+	label_dataChanges->Text = LABEL_CHAPTER_CHANGE ;
+	label_dataName->Text = LABEL_CHAPTER_NAME;
 
-	label_safeSize->Text = "Size:";
-	label_safeChanges->Text = "Change: ";
-	label_safeName->Text = "Name:";
+	label_safeSize->Text = LABEL_CHAPTER_SIZE;
+	label_safeChanges->Text = LABEL_CHAPTER_CHANGE;
+	label_safeName->Text = LABEL_CHAPTER_NAME;
 }
 
 System::Void MainForm::eventButtonsEnable(System::IO::FileInfo^ dataFile, System::String^ safePath)
 {
-	button_eventData->Text = "Copy from Data";
+	button_eventData->Text = LABEL_ACTION_COPY_DATA;
 	button_eventData->Enabled = true;
 	button_skip->Enabled = true;
-	button_eventSafe->Text = "Delete from Data";
+	button_eventSafe->Text = LABEL_ACTION_DEL_DATA;
 	button_eventSafe->Enabled = true;
 	panel_data->Enabled = true;
 
-	label_dataSize->Text = "Size: " + dataFile->Length.ToString();
-	label_dataChanges->Text = "Change: " + dataFile->LastWriteTime.ToString();
-	label_dataName->Text = "Name: " + dataFile->FullName;
+	label_dataSize->Text = LABEL_CHAPTER_SIZE + dataFile->Length.ToString();
+	label_dataChanges->Text = LABEL_CHAPTER_CHANGE + dataFile->LastWriteTime.ToString();
+	label_dataName->Text = LABEL_CHAPTER_NAME + dataFile->FullName;
 
-	label_safeSize->Text = "Size:";
-	label_safeChanges->Text = "Change:";
-	label_safeName->Text = "Name: " + safePath + dataFile->Name;
+	label_safeSize->Text = LABEL_CHAPTER_SIZE;
+	label_safeChanges->Text = LABEL_CHAPTER_CHANGE;
+	label_safeName->Text = LABEL_CHAPTER_NAME + safePath + dataFile->Name;
 
 	if(nullptr != sound_differenceFound)
 		sound_differenceFound->Play();
@@ -113,20 +114,20 @@ System::Void MainForm::eventButtonsEnable(System::IO::FileInfo^ dataFile, System
 // #UPADATE_1.1: Back Checking (from Safe to Data)
 System::Void MainForm::eventButtonsEnable(System::String^ dataPath, System::IO::FileInfo^ safeFile)
 {
-	button_eventData->Text = "Delete from Safe";
+	button_eventData->Text = LABEL_ACTION_DEL_SAFE;
 	button_eventData->Enabled = true;
 	button_skip->Enabled = true;
-	button_eventSafe->Text = "Copy from Safe";
+	button_eventSafe->Text = LABEL_ACTION_COPY_SAFE;
 	button_eventSafe->Enabled = true;
 	panel_safe->Enabled = true;
 
-	label_dataSize->Text = "Size:";
-	label_dataChanges->Text = "Change:";
-	label_dataName->Text = "Name: " + dataPath + safeFile->Name;
+	label_dataSize->Text = LABEL_CHAPTER_SIZE;
+	label_dataChanges->Text = LABEL_CHAPTER_CHANGE;
+	label_dataName->Text = LABEL_CHAPTER_NAME + dataPath + safeFile->Name;
 
-	label_safeSize->Text = "Size: " + safeFile->Length.ToString();
-	label_safeChanges->Text = "Change: " + safeFile->LastWriteTime.ToString();
-	label_safeName->Text = "Name: " + safeFile->FullName;
+	label_safeSize->Text = LABEL_CHAPTER_SIZE + safeFile->Length.ToString();
+	label_safeChanges->Text = LABEL_CHAPTER_CHANGE + safeFile->LastWriteTime.ToString();
+	label_safeName->Text = LABEL_CHAPTER_NAME + safeFile->FullName;
 
 	if (nullptr != sound_differenceFound)
 		sound_differenceFound->Play();
@@ -134,21 +135,21 @@ System::Void MainForm::eventButtonsEnable(System::String^ dataPath, System::IO::
 
 System::Void MainForm::eventButtonsEnable(System::IO::FileInfo^ dataFile, System::IO::FileInfo^ safeFile)
 {
-	button_eventData->Text = "Copy from Data";
+	button_eventData->Text = LABEL_ACTION_COPY_DATA;
 	button_eventData->Enabled = true;
 	button_skip->Enabled = true;
-	button_eventSafe->Text = "Copy from Safe";
+	button_eventSafe->Text = LABEL_ACTION_COPY_SAFE;
 	button_eventSafe->Enabled = true;
 	panel_data->Enabled = true;
 	panel_safe->Enabled = true;
 
-	label_dataSize->Text = "Size: " + dataFile->Length.ToString();
-	label_dataChanges->Text = "Change: " + dataFile->LastWriteTime.ToString();
-	label_dataName->Text = "Name: " + dataFile->FullName;
+	label_dataSize->Text = LABEL_CHAPTER_SIZE + dataFile->Length.ToString();
+	label_dataChanges->Text = LABEL_CHAPTER_CHANGE + dataFile->LastWriteTime.ToString();
+	label_dataName->Text = LABEL_CHAPTER_NAME + dataFile->FullName;
 
-	label_safeSize->Text = "Size: " + safeFile->Length.ToString();
-	label_safeChanges->Text = "Change: " + safeFile->LastWriteTime.ToString();
-	label_safeName->Text = "Name: " + safeFile->FullName;
+	label_safeSize->Text = LABEL_CHAPTER_SIZE + safeFile->Length.ToString();
+	label_safeChanges->Text = LABEL_CHAPTER_CHANGE + safeFile->LastWriteTime.ToString();
+	label_safeName->Text = LABEL_CHAPTER_NAME + safeFile->FullName;
 
 	if (nullptr != sound_differenceFound)
 		sound_differenceFound->Play();
@@ -156,7 +157,7 @@ System::Void MainForm::eventButtonsEnable(System::IO::FileInfo^ dataFile, System
 
 System::Void MainForm::checkDifferences()
 {
-	label_process->Text = "Processing...";
+	label_process->Text = LABEL_PRICESSING;
 	button_edit->Enabled = false;
 	button_check->Enabled = false;
 
@@ -169,12 +170,12 @@ System::Void MainForm::checkDifferences()
 	String^ buffPath;
 	wchar_t buffType;
 
-	readFile = gcnew StreamReader(Application::StartupPath + "\\config.ds");
+	readFile = gcnew StreamReader(Application::StartupPath + FILE_CONFIG);
 
 	while (true)
 	{
 		buffPath = readFile->ReadLine();
-		if (!buffPath || buffPath == "")
+		if (!buffPath || buffPath == EMPTY_STRING)
 			break;
 		buffType = buffPath[buffPath->Length - 1];
 		if (buffType == '\\' || buffType == '/')
@@ -182,7 +183,7 @@ System::Void MainForm::checkDifferences()
 			dataDirInfo = gcnew System::IO::DirectoryInfo(buffPath);
 			if (!dataDirInfo->Exists)
 			{
-				MessageBox::Show("Directory \"" + buffPath + "\" not exist!", "Error",
+				MessageBox::Show( MESSAGE_TEXT_DIR_NEXIST( buffPath ), MESSAGE_TITLE_ERROR,
 					System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
 				return;
 			}
@@ -234,12 +235,12 @@ System::Void MainForm::checkDifferences()
 					if (progressBar->Maximum < progressBar->Value + 1)
 						progressBar->Maximum++;
 					progressBar->Value++;
-					label_processSize->Text = progressBar->Value.ToString( ) + " / " + progressBar->Maximum.ToString( ) + " files";
+					label_processSize->Text = MESSAGE_TEXT_PROGRESS( progressBar->Value.ToString(), progressBar->Maximum.ToString() );
 				}
 			}
 
 			// #UPADATE_1.1: Back Checking (from Safe to Data)
-			label_back_check->Text = "<-- back check";
+			label_back_check->Text = LABEL_BACK_CHECK;
 			for (int iter = 0; iter < safeDirInfo->GetFiles()->Length; iter++)
 			{
 				label_file_names->Text = safeDirInfo->GetFiles()[iter]->ToString( );
@@ -263,15 +264,15 @@ System::Void MainForm::checkDifferences()
 					//MessageBox::Show("#UPDATE_1" + "\n" + dataDirInfo->ToString() + safeDirInfo->GetFiles()[iter] + "\n" + safeDirInfo->ToString() + safeDirInfo->GetFiles()[iter]);
 				}
 			}
-			label_file_names->Text = "";
-			label_back_check->Text = "";
+			label_file_names->Text = EMPTY_STRING;
+			label_back_check->Text = EMPTY_STRING;
 		}
 		else if (buffType == '+')
 		{
 			dataDirInfo = gcnew System::IO::DirectoryInfo(buffPath->Remove(buffPath->Length - 1));
 			if (!dataDirInfo->Exists)
 			{
-				MessageBox::Show("Directory \"" + dataDirInfo->ToString() + "\" not exist!", "Error",
+				MessageBox::Show(MESSAGE_TEXT_DIR_NEXIST( dataDirInfo->ToString() ), MESSAGE_TITLE_ERROR,
 					System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
 				return;
 			}
@@ -283,7 +284,7 @@ System::Void MainForm::checkDifferences()
 			dataFileInfo = gcnew System::IO::FileInfo(buffPath);
 			if (!dataFileInfo->Exists)
 			{
-				MessageBox::Show("File \"" + dataFileInfo->ToString() + "\" not exist!", "Error",
+				MessageBox::Show(MESSAGE_TEXT_FILE_NEXIST( dataFileInfo->ToString() ), MESSAGE_TITLE_ERROR,
 					System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
 				return;
 			}
@@ -325,17 +326,17 @@ System::Void MainForm::checkDifferences()
 				if (progressBar->Maximum < progressBar->Value + 1)
 					progressBar->Maximum++;
 				progressBar->Value++;
-				label_processSize->Text = progressBar->Value.ToString( ) + " / " + progressBar->Maximum.ToString( ) + " files";
+				label_processSize->Text = MESSAGE_TEXT_PROGRESS( progressBar->Value.ToString(), progressBar->Maximum.ToString() );
 			}
 		}
 	}
 
 	readFile->Close();
-	readFile = gcnew StreamReader(Application::StartupPath + "\\config.ds");
+	readFile = gcnew StreamReader(Application::StartupPath + FILE_CONFIG);
 
-	label_process->Text = "Checking Done!";
+	label_process->Text = LABEL_CHECK_DONE;
 	progressBar->Value = progressBar->Maximum;
-	label_processSize->Text = progressBar->Value.ToString( ) + " / " + progressBar->Maximum.ToString( ) + " files";
+	label_processSize->Text = MESSAGE_TEXT_PROGRESS( progressBar->Value.ToString( ), progressBar->Maximum.ToString( ) );
 	button_edit->Enabled = true;
 	button_check->Enabled = true;
 
@@ -408,12 +409,12 @@ System::Void MainForm::checkSubFolderDifferences(System::String^ dataPath, Syste
 			if (progressBar->Maximum < progressBar->Value + 1)
 				progressBar->Maximum++;
 			progressBar->Value++;
-			label_processSize->Text = progressBar->Value.ToString( ) + " / " + progressBar->Maximum.ToString( ) + " files";
+			label_processSize->Text = MESSAGE_TEXT_PROGRESS( progressBar->Value.ToString(), progressBar->Maximum.ToString() );
 		}
 	}
 
 	// #UPADATE_1.1: Back Checking (from Safe to Data)
-	label_back_check->Text = "<-- back check";
+	label_back_check->Text = LABEL_BACK_CHECK;
 	System::IO::DirectoryInfo safeDirInfo(safePath);
 	for (int iter = 0; iter < safeDirInfo.GetFiles()->Length; iter++)
 	{
@@ -437,20 +438,20 @@ System::Void MainForm::checkSubFolderDifferences(System::String^ dataPath, Syste
 			//MessageBox::Show("#UPDATE_2" + "\n" + dataDirInfo.ToString() + safeDirInfo.GetFiles()[iter]->Name + "\n" + safeDirInfo.GetFiles()[iter]->FullName);
 		}
 	}
-	label_file_names->Text = "";
-	label_back_check->Text = "";
+	label_file_names->Text = EMPTY_STRING;
+	label_back_check->Text = EMPTY_STRING;
 }
 
 System::Void MainForm::label_processSize_MouseDoubleClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e)
 {
-	if ("Processing..." == label_process->Text)
+	if (LABEL_PRICESSING == label_process->Text)
 		return;
 
 	if (checkSize->isRun())
 		checkSize->stopProcess();
 
 	readFile->Close();
-	readFile = gcnew StreamReader(Application::StartupPath + "\\config.ds");
+	readFile = gcnew StreamReader(Application::StartupPath + FILE_CONFIG);
 	checkSize = gcnew CheckSize(readFile, label_processSize);
 
 	checkSize->startProcess();
@@ -460,16 +461,16 @@ System::Void MainForm::button_eventData_Click(System::Object^  sender, System::E
 {
 	String^ safeFile = label_safeName->Text->ToString()->Remove(0, 6);
 
-	if (button_eventData->Text == "Copy from Data")
+	if (button_eventData->Text == LABEL_ACTION_COPY_DATA)
 	{
 		String^ dataFile = label_dataName->Text->ToString()->Remove(0, 6);
 		File::Copy(dataFile, safeFile, true);
 	}
 	// #UPADATE_1.1: Back Checking (from Safe to Data)
-	else if (button_eventData->Text == "Delete from Safe")
+	else if (button_eventData->Text == LABEL_ACTION_DEL_SAFE)
 	{
 		System::Windows::Forms::DialogResult check;
-		check = MessageBox::Show("Deleted file cannot be restored!", "Attention",
+		check = MessageBox::Show (MESSAGE_TEXT_DELFNREST, MESSAGE_TITLE_ATTENTION,
 			System::Windows::Forms::MessageBoxButtons::OKCancel, System::Windows::Forms::MessageBoxIcon::Warning);
 		if (check == System::Windows::Forms::DialogResult::Cancel)
 			return;
@@ -484,15 +485,15 @@ System::Void MainForm::button_eventSafe_Click(System::Object^  sender, System::E
 {
 	String^ dataFile = label_dataName->Text->ToString()->Remove(0, 6);
 
-	if (button_eventSafe->Text == "Copy from Safe")
+	if (button_eventSafe->Text == LABEL_ACTION_COPY_SAFE)
 	{
 		String^ safeFile = label_safeName->Text->ToString()->Remove(0, 6);
 		File::Copy(safeFile, dataFile, true);
 	}
-	else if (button_eventSafe->Text == "Delete from Data")
+	else if (button_eventSafe->Text == LABEL_ACTION_DEL_DATA)
 	{
 		System::Windows::Forms::DialogResult check;
-		check = MessageBox::Show("Deleted file cannot be restored!", "Attention",
+		check = MessageBox::Show( MESSAGE_TEXT_DELFNREST, MESSAGE_TITLE_ATTENTION,
 			System::Windows::Forms::MessageBoxButtons::OKCancel, System::Windows::Forms::MessageBoxIcon::Warning);
 		if (check == System::Windows::Forms::DialogResult::Cancel)
 			return;

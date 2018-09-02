@@ -27,9 +27,6 @@
     <ClCompile Include="CheckSizeThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DifferentFinder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainForm.h">
@@ -41,7 +38,7 @@
     <ClInclude Include="CheckSizeThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DifferentFinder.h">
+    <ClInclude Include="Defines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

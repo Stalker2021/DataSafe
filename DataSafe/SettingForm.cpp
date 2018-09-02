@@ -1,4 +1,5 @@
 #include "SettingForm.h"
+#include "Defines.h"
 
 using DataSafe::SettingForm;
 using System::IO::StreamReader;
@@ -8,12 +9,12 @@ using System::Windows::Forms::DialogResult;
 
 System::Void SettingForm::SettingForm_Load(System::Object^  sender, System::EventArgs^  e) {
 	SettingForm::Location = startPoint;
-	StreamReader^ readFile = gcnew StreamReader(Application::StartupPath + "\\config.ds");
+	StreamReader^ readFile = gcnew StreamReader(Application::StartupPath + FILE_CONFIG);
 	String^ check;
 	while (true)
 	{
 		check = readFile->ReadLine();
-		if (!check || check == "")
+		if (!check || check == EMPTY_STRING)
 			break;
 		listBox_sett_data->Items->Add(check);
 		dataStack.push_back(check);
@@ -52,21 +53,21 @@ System::Void SettingForm::button_sett_back_Click(System::Object^  sender, System
 
 System::Void SettingForm::listBox_sett_data_DoubleClick(System::Object^  sender, System::EventArgs^  e) {
 	if (listBox_sett_data->SelectedIndex >= 0)
-		MessageBox::Show("Data:\n" + listBox_sett_data->Items[listBox_sett_data->SelectedIndex] +
-			"\n\nSafe:\n" + listBox_sett_safe->Items[listBox_sett_data->SelectedIndex], "Selected Items");
+		MessageBox::Show( MESSAGE_TEXT_DAT_SAF_SELECT( listBox_sett_data->Items[listBox_sett_data->SelectedIndex],
+			listBox_sett_safe->Items[listBox_sett_data->SelectedIndex] ), MESSAGE_TITLE_SELECTITM );
 }
 
 System::Void SettingForm::listBox_sett_safe_DoubleClick(System::Object^  sender, System::EventArgs^  e) {
 	if (listBox_sett_safe->SelectedIndex >= 0)
-		MessageBox::Show("Data:\n" + listBox_sett_data->Items[listBox_sett_safe->SelectedIndex] +
-			"\n\nSafe:\n" + listBox_sett_safe->Items[listBox_sett_safe->SelectedIndex], "Selected Items");
+		MessageBox::Show(MESSAGE_TEXT_DAT_SAF_SELECT( listBox_sett_data->Items[listBox_sett_safe->SelectedIndex],
+			listBox_sett_safe->Items[listBox_sett_safe->SelectedIndex] ), MESSAGE_TITLE_SELECTITM );
 }
 
 System::Void SettingForm::button_sett_addFolder_Click(System::Object^  sender, System::EventArgs^  e) {
 	String^ dataFolder;
 	String^ safeFolder;
 	System::Windows::Forms::DialogResult check;
-	folderBrowserDialog_sett_select->Description = "Select Data Folder";
+	folderBrowserDialog_sett_select->Description = BROWSER_DESCR_SELDATAD;
 	check = folderBrowserDialog_sett_select->ShowDialog();
 	if (check == System::Windows::Forms::DialogResult::Cancel)
 		return;
@@ -76,20 +77,20 @@ System::Void SettingForm::button_sett_addFolder_Click(System::Object^  sender, S
 
 	if (checkStack(dataFolder, dataStack) || checkStack(dataFolder+"+", dataStack))
 	{
-		check = MessageBox::Show("Selected folder already in Safe!", "Attention",
+		check = MessageBox::Show( MESSAGE_TEXT_ALRINSAFE, MESSAGE_TITLE_ATTENTION,
 			System::Windows::Forms::MessageBoxButtons::OKCancel, System::Windows::Forms::MessageBoxIcon::Warning);
 		if (check == System::Windows::Forms::DialogResult::Cancel)
 			return;
 	}
 
-	check = MessageBox::Show("You want to save the folders in selected directory?", "Question",
+	check = MessageBox::Show( MESSAGE_TEXT_WANTSAVSUB, MESSAGE_TITLE_QUESTION,
 		System::Windows::Forms::MessageBoxButtons::YesNo, System::Windows::Forms::MessageBoxIcon::Question);
 	if (check == System::Windows::Forms::DialogResult::Cancel)
 		return;
 	if (check == System::Windows::Forms::DialogResult::Yes)
 		dataFolder += "+";
 
-	folderBrowserDialog_sett_select->Description = "Select Safe Folder";
+	folderBrowserDialog_sett_select->Description = BROWSER_DESCR_SELSAFE;
 	check = folderBrowserDialog_sett_select->ShowDialog();
 	if (check == System::Windows::Forms::DialogResult::Cancel)
 		return;
@@ -99,14 +100,14 @@ System::Void SettingForm::button_sett_addFolder_Click(System::Object^  sender, S
 
 	if (dataFolder == safeFolder || dataFolder == safeFolder+"+")
 	{
-		MessageBox::Show("One folder cannot be used for Data and Safe!", "Error",
+		MessageBox::Show( MESSAGE_TEXT_ONEFOLNUSE, MESSAGE_TITLE_ERROR,
 			System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
 		return;
 	}
 
 	if (checkStack(safeFolder, safeStack))
 	{
-		MessageBox::Show("Selected folder already using as Safe!", "Error",
+		MessageBox::Show( MESSAGE_TEXT_ALRASSAFE, MESSAGE_TITLE_ERROR,
 			System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
 		return;
 	}
@@ -115,7 +116,7 @@ System::Void SettingForm::button_sett_addFolder_Click(System::Object^  sender, S
 	listBox_sett_safe->Items->Add(safeFolder);
 	dataStack.push_back(dataFolder);
 	safeStack.push_back(safeFolder);
-	StreamWriter^ writeFile = gcnew StreamWriter(Application::StartupPath + "\\config.ds", true);
+	StreamWriter^ writeFile = gcnew StreamWriter(Application::StartupPath + FILE_CONFIG, true);
 	writeFile->WriteLine(dataFolder);
 	writeFile->WriteLine(safeFolder);
 	writeFile->Close();
@@ -125,12 +126,12 @@ System::Void SettingForm::button_sett_delete_Click(System::Object^  sender, Syst
 {
 	System::Windows::Forms::DialogResult check;
 
-	check = MessageBox::Show("Safe link will be deleted:\n\n" + listBox_sett_data->SelectedItem + "\n" + listBox_sett_safe->SelectedItem, "Attention",
+	check = MessageBox::Show( MESSAGE_TEXT_LINK_DEL( listBox_sett_data->SelectedItem, listBox_sett_safe->SelectedItem ), MESSAGE_TITLE_ATTENTION,
 		System::Windows::Forms::MessageBoxButtons::OKCancel, System::Windows::Forms::MessageBoxIcon::Warning);
 	if (check == System::Windows::Forms::DialogResult::Cancel)
 		return;
 
-	check = MessageBox::Show("You want delete files in Safe by the link?", "Question",
+	check = MessageBox::Show( MESSAGE_TEXT_WANTDELLNK, MESSAGE_TITLE_QUESTION,
 	System::Windows::Forms::MessageBoxButtons::YesNo, System::Windows::Forms::MessageBoxIcon::Question);
 	if (check == System::Windows::Forms::DialogResult::Yes)
 	{
@@ -163,7 +164,7 @@ System::Void SettingForm::button_sett_delete_Click(System::Object^  sender, Syst
 	dataStack.erase(dataStack.begin() + buffIndex);
 	safeStack.erase(safeStack.begin() + buffIndex);
 
-	StreamWriter^ writeFile = gcnew StreamWriter(Application::StartupPath + "\\config.ds", false);
+	StreamWriter^ writeFile = gcnew StreamWriter(Application::StartupPath + FILE_CONFIG, false);
 	for (int iter = 0; iter < listBox_sett_data->Items->Count; iter++)
 	{
 		writeFile->WriteLine(listBox_sett_data->Items[iter]);
@@ -174,7 +175,7 @@ System::Void SettingForm::button_sett_delete_Click(System::Object^  sender, Syst
 
 System::Void SettingForm::button_sett_addFile_Click(System::Object^  sender, System::EventArgs^  e)
 {
-	openFileDialog_sett_sellect->Title = "Select Data Files";
+	openFileDialog_sett_sellect->Title = BROWSER_DESCR_SELDATAF;
 
 	System::Windows::Forms::DialogResult check;
 	check = openFileDialog_sett_sellect->ShowDialog();
@@ -184,14 +185,14 @@ System::Void SettingForm::button_sett_addFile_Click(System::Object^  sender, Sys
 	{
 		if (checkStack(openFileDialog_sett_sellect->FileNames[iter]->ToString(), dataStack))
 		{
-			check = MessageBox::Show("Some selected files already in Safe!", "Attention",
+			check = MessageBox::Show( MESSAGE_TEXT_FEXISTSAFE, MESSAGE_TITLE_ATTENTION,
 				System::Windows::Forms::MessageBoxButtons::OKCancel, System::Windows::Forms::MessageBoxIcon::Warning);
 			if (check == System::Windows::Forms::DialogResult::Cancel)
 				return;
 		}
 	}
 
-	folderBrowserDialog_sett_select->Description = "Select Safe Folder";
+	folderBrowserDialog_sett_select->Description = BROWSER_DESCR_SELSAFE;
 	check = folderBrowserDialog_sett_select->ShowDialog();
 	if (check == System::Windows::Forms::DialogResult::Cancel)
 		return;
@@ -202,19 +203,19 @@ System::Void SettingForm::button_sett_addFile_Click(System::Object^  sender, Sys
 
 	if (openFileDialog_sett_sellect->FileNames[0] == safeDirect + openFileDialog_sett_sellect->SafeFileNames[0])
 	{
-		MessageBox::Show("One folder cannot be used for Data and Safe!", "Error",
+		MessageBox::Show( MESSAGE_TEXT_DIRNFORDS, MESSAGE_TITLE_ERROR,
 			System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
 		return;
 	}
 
 	if (checkStack(safeDirect, safeStack))
 	{
-		MessageBox::Show("Selected folder already using as Safe!", "Error",
+		MessageBox::Show( MESSAGE_TEXT_ALRASSAFE, MESSAGE_TITLE_ERROR,
 			System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
 		return;
 	}
 	
-	StreamWriter^ writeFile = gcnew StreamWriter(Application::StartupPath + "\\config.ds", true);
+	StreamWriter^ writeFile = gcnew StreamWriter(Application::StartupPath + FILE_CONFIG, true);
 	for (int iter = 0; iter < openFileDialog_sett_sellect->FileNames->Length; iter++)
 	{
 		listBox_sett_data->Items->Add(openFileDialog_sett_sellect->FileNames[iter]->ToString());

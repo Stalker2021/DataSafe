@@ -1,4 +1,5 @@
 #include "CheckSizeThread.h"
+#include "Defines.h"
 
 using System::Windows::Forms::MessageBox;
 using System::Threading::Thread;
@@ -21,7 +22,7 @@ void CheckSize::checkDataSize()
 	while (true)
 	{
 		buffPath = configFile->ReadLine();
-		if (!buffPath || buffPath == "")
+		if (!buffPath || buffPath == EMPTY_STRING)
 			break;
 		buffType = buffPath[buffPath->Length - 1];
 		if (buffType == '\\' || buffType == '/')
@@ -29,7 +30,7 @@ void CheckSize::checkDataSize()
 			dirInfo = gcnew System::IO::DirectoryInfo(buffPath);
 			if (!dirInfo->Exists)
 			{
-				MessageBox::Show("Directory \"" + buffPath + "\" not exist!", "Error",
+				MessageBox::Show (MESSAGE_TEXT_DIR_NEXIST( buffPath ), MESSAGE_TITLE_ERROR,
 					System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
 				return;
 			}
@@ -42,7 +43,7 @@ void CheckSize::checkDataSize()
 			dirInfo = gcnew System::IO::DirectoryInfo(buffPath->Remove(buffPath->Length - 1));
 			if (!dirInfo->Exists)
 			{
-				MessageBox::Show("Directory \"" + dirInfo->ToString() + "\" not exist!", "Error",
+				MessageBox::Show( MESSAGE_TEXT_DIR_NEXIST( dirInfo->ToString() ), MESSAGE_TITLE_ERROR,
 					System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
 				return;
 			}
@@ -54,7 +55,7 @@ void CheckSize::checkDataSize()
 			fileInfo = gcnew System::IO::FileInfo(buffPath);
 			if (!fileInfo->Exists)
 			{
-				MessageBox::Show("File \"" + fileInfo->ToString() + "\" not exist!", "Error",
+				MessageBox::Show( MESSAGE_TEXT_FILE_NEXIST( fileInfo->ToString() ), MESSAGE_TITLE_ERROR,
 					System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
 				return;
 			}
@@ -107,9 +108,9 @@ void CheckSize::checkSubFolderSize(System::String^ checkPath)
 void CheckSize::putLableTextSize()
 {
 	if (inProgress)
-		sizeLable->Text = "Calculation: " + counter.ToString( ) + " files";
+		sizeLable->Text = LABEL_CALCUL( counter.ToString( ) );
 	else
-		sizeLable->Text = "0 / " + counter.ToString( ) + " files";
+		sizeLable->Text = LABEL_CALCUL_RES( counter.ToString( ) );
 }
 
 unsigned long long int CheckSize::getSize()
