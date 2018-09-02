@@ -10,21 +10,23 @@ using System::IO::StreamWriter;
 using System::IO::File;
 using System::Media::SoundPlayer;
 
+#define APP_START_DIR Application::StartupPath
+
 System::Void MainForm::MainForm_Load(System::Object^  sender, System::EventArgs^  e) {
 	label_processSize->CheckForIllegalCrossThreadCalls = false;
 
-	if (File::Exists(Application::StartupPath + FILE_SOUND_DIFFER_FOUND))
-		sound_differenceFound = gcnew SoundPlayer(Application::StartupPath + FILE_SOUND_DIFFER_FOUND);
+	if (File::Exists(APP_START_DIR + FILE_SOUND_DIFFER_FOUND))
+		sound_differenceFound = gcnew SoundPlayer(APP_START_DIR + FILE_SOUND_DIFFER_FOUND);
 
-	if (File::Exists(Application::StartupPath + FILE_SOUND_CHECK_DONE))
-		sound_checkingDone = gcnew SoundPlayer(Application::StartupPath + FILE_SOUND_CHECK_DONE);
+	if (File::Exists(APP_START_DIR + FILE_SOUND_CHECK_DONE))
+		sound_checkingDone = gcnew SoundPlayer(APP_START_DIR + FILE_SOUND_CHECK_DONE);
 
-	if (!File::Exists(Application::StartupPath + FILE_CONFIG))
+	if (!File::Exists(APP_START_DIR + FILE_CONFIG))
 	{
-		StreamWriter^ writeFile = gcnew StreamWriter(Application::StartupPath + FILE_CONFIG);
+		StreamWriter^ writeFile = gcnew StreamWriter(APP_START_DIR + FILE_CONFIG);
 		writeFile->Close();
 	}
-	readFile = gcnew StreamReader(Application::StartupPath + FILE_CONFIG);
+	readFile = gcnew StreamReader(APP_START_DIR + FILE_CONFIG);
 
 	checkSize = gcnew CheckSize(readFile, label_processSize);
 	checkSize->startProcess();
@@ -43,7 +45,7 @@ System::Void MainForm::button_edit_Click(System::Object^  sender, System::EventA
 	MainForm::Location = settingWindow->startPoint;
 	label_process->Text = LABEL_READY;
 	progressBar->Value = 0;
-	readFile = gcnew StreamReader(Application::StartupPath + FILE_CONFIG);
+	readFile = gcnew StreamReader(APP_START_DIR + FILE_CONFIG);
 	checkSize = gcnew CheckSize(readFile, label_processSize);
 	checkSize->startProcess();
 	MainForm::Visible = true;
@@ -172,7 +174,7 @@ System::Void MainForm::checkDifferences()
 	String^ buffPath;
 	wchar_t buffType;
 
-	readFile = gcnew StreamReader(Application::StartupPath + FILE_CONFIG);
+	readFile = gcnew StreamReader(APP_START_DIR + FILE_CONFIG);
 
 	while (true)
 	{
@@ -185,8 +187,7 @@ System::Void MainForm::checkDifferences()
 			dataDirInfo = gcnew System::IO::DirectoryInfo(buffPath);
 			if (!dataDirInfo->Exists)
 			{
-				MessageBox::Show( MESSAGE_TEXT_DIR_NEXIST( buffPath ), MESSAGE_TITLE_ERROR,
-					System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
+				MessageBox::Show( MESSAGE_TEXT_DIR_NEXIST( buffPath ), MESSAGE_TITLE_ERROR, MessageBoxButtons::OK, MessageBoxIcon::Error);
 				return;
 			}
 
@@ -274,8 +275,8 @@ System::Void MainForm::checkDifferences()
 			dataDirInfo = gcnew System::IO::DirectoryInfo(buffPath->Remove(buffPath->Length - 1));
 			if (!dataDirInfo->Exists)
 			{
-				MessageBox::Show(MESSAGE_TEXT_DIR_NEXIST( dataDirInfo->ToString() ), MESSAGE_TITLE_ERROR,
-					System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
+				MessageBox::Show(MESSAGE_TEXT_DIR_NEXIST( dataDirInfo->ToString() ),
+					MESSAGE_TITLE_ERROR, MessageBoxButtons::OK, MessageBoxIcon::Error);
 				return;
 			}
 
@@ -286,8 +287,8 @@ System::Void MainForm::checkDifferences()
 			dataFileInfo = gcnew System::IO::FileInfo(buffPath);
 			if (!dataFileInfo->Exists)
 			{
-				MessageBox::Show(MESSAGE_TEXT_FILE_NEXIST( dataFileInfo->ToString() ), MESSAGE_TITLE_ERROR,
-					System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
+				MessageBox::Show(MESSAGE_TEXT_FILE_NEXIST( dataFileInfo->ToString() ),
+					MESSAGE_TITLE_ERROR, MessageBoxButtons::OK, MessageBoxIcon::Error);
 				return;
 			}
 
@@ -334,7 +335,7 @@ System::Void MainForm::checkDifferences()
 	}
 
 	readFile->Close();
-	readFile = gcnew StreamReader(Application::StartupPath + FILE_CONFIG);
+	readFile = gcnew StreamReader(APP_START_DIR + FILE_CONFIG);
 
 	label_process->Text = LABEL_CHECK_DONE;
 	progressBar->Value = progressBar->Maximum;
@@ -453,7 +454,7 @@ System::Void MainForm::label_processSize_MouseDoubleClick(System::Object^  sende
 		checkSize->stopProcess();
 
 	readFile->Close();
-	readFile = gcnew StreamReader(Application::StartupPath + FILE_CONFIG);
+	readFile = gcnew StreamReader(APP_START_DIR + FILE_CONFIG);
 	checkSize = gcnew CheckSize(readFile, label_processSize);
 
 	checkSize->startProcess();
@@ -472,8 +473,7 @@ System::Void MainForm::button_eventData_Click(System::Object^  sender, System::E
 	else if (button_eventData->Text == LABEL_ACTION_DEL_SAFE)
 	{
 		System::Windows::Forms::DialogResult check;
-		check = MessageBox::Show (MESSAGE_TEXT_DELFNREST, MESSAGE_TITLE_ATTENTION,
-			System::Windows::Forms::MessageBoxButtons::OKCancel, System::Windows::Forms::MessageBoxIcon::Warning);
+		check = MessageBox::Show (MESSAGE_TEXT_DELFNREST, MESSAGE_TITLE_ATTENTION, MessageBoxButtons::OKCancel, MessageBoxIcon::Warning);
 		if (check == System::Windows::Forms::DialogResult::Cancel)
 			return;
 
@@ -495,8 +495,7 @@ System::Void MainForm::button_eventSafe_Click(System::Object^  sender, System::E
 	else if (button_eventSafe->Text == LABEL_ACTION_DEL_DATA)
 	{
 		System::Windows::Forms::DialogResult check;
-		check = MessageBox::Show( MESSAGE_TEXT_DELFNREST, MESSAGE_TITLE_ATTENTION,
-			System::Windows::Forms::MessageBoxButtons::OKCancel, System::Windows::Forms::MessageBoxIcon::Warning);
+		check = MessageBox::Show( MESSAGE_TEXT_DELFNREST, MESSAGE_TITLE_ATTENTION, MessageBoxButtons::OKCancel, MessageBoxIcon::Warning);
 		if (check == System::Windows::Forms::DialogResult::Cancel)
 			return;
 

@@ -2,6 +2,8 @@
 #include "Defines.h"
 
 using System::Windows::Forms::MessageBox;
+using System::Windows::Forms::MessageBoxButtons;
+using System::Windows::Forms::MessageBoxIcon;
 using System::Threading::Thread;
 
 CheckSize::CheckSize(System::IO::StreamReader^ config, System::Windows::Forms::Label^ lable)
@@ -30,8 +32,7 @@ void CheckSize::checkDataSize()
 			dirInfo = gcnew System::IO::DirectoryInfo(buffPath);
 			if (!dirInfo->Exists)
 			{
-				MessageBox::Show (MESSAGE_TEXT_DIR_NEXIST( buffPath ), MESSAGE_TITLE_ERROR,
-					System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
+				MessageBox::Show (MESSAGE_TEXT_DIR_NEXIST( buffPath ), MESSAGE_TITLE_ERROR, MessageBoxButtons::OK, MessageBoxIcon::Error);
 				return;
 			}
 
@@ -43,8 +44,8 @@ void CheckSize::checkDataSize()
 			dirInfo = gcnew System::IO::DirectoryInfo(buffPath->Remove(buffPath->Length - 1));
 			if (!dirInfo->Exists)
 			{
-				MessageBox::Show( MESSAGE_TEXT_DIR_NEXIST( dirInfo->ToString() ), MESSAGE_TITLE_ERROR,
-					System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
+				MessageBox::Show( MESSAGE_TEXT_DIR_NEXIST( dirInfo->ToString() ),
+					MESSAGE_TITLE_ERROR, MessageBoxButtons::OK, MessageBoxIcon::Error);
 				return;
 			}
 
@@ -55,8 +56,8 @@ void CheckSize::checkDataSize()
 			fileInfo = gcnew System::IO::FileInfo(buffPath);
 			if (!fileInfo->Exists)
 			{
-				MessageBox::Show( MESSAGE_TEXT_FILE_NEXIST( fileInfo->ToString() ), MESSAGE_TITLE_ERROR,
-					System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
+				MessageBox::Show( MESSAGE_TEXT_FILE_NEXIST( fileInfo->ToString() ),
+					MESSAGE_TITLE_ERROR, MessageBoxButtons::OK, MessageBoxIcon::Error);
 				return;
 			}
 			counter++;

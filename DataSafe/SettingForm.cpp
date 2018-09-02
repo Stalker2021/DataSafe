@@ -7,9 +7,11 @@ using System::IO::StreamWriter;
 using System::Windows::Forms::MessageBox;
 using System::Windows::Forms::DialogResult;
 
+#define APP_START_DIR Application::StartupPath
+
 System::Void SettingForm::SettingForm_Load(System::Object^  sender, System::EventArgs^  e) {
 	SettingForm::Location = startPoint;
-	StreamReader^ readFile = gcnew StreamReader(Application::StartupPath + FILE_CONFIG);
+	StreamReader^ readFile = gcnew StreamReader(APP_START_DIR + FILE_CONFIG);
 	String^ check;
 	while (true)
 	{
@@ -77,14 +79,12 @@ System::Void SettingForm::button_sett_addFolder_Click(System::Object^  sender, S
 
 	if (checkStack(dataFolder, dataStack) || checkStack(dataFolder+"+", dataStack))
 	{
-		check = MessageBox::Show( MESSAGE_TEXT_ALRINSAFE, MESSAGE_TITLE_ATTENTION,
-			System::Windows::Forms::MessageBoxButtons::OKCancel, System::Windows::Forms::MessageBoxIcon::Warning);
+		check = MessageBox::Show( MESSAGE_TEXT_ALRINSAFE, MESSAGE_TITLE_ATTENTION, MessageBoxButtons::OKCancel, MessageBoxIcon::Warning);
 		if (check == System::Windows::Forms::DialogResult::Cancel)
 			return;
 	}
 
-	check = MessageBox::Show( MESSAGE_TEXT_WANTSAVSUB, MESSAGE_TITLE_QUESTION,
-		System::Windows::Forms::MessageBoxButtons::YesNo, System::Windows::Forms::MessageBoxIcon::Question);
+	check = MessageBox::Show( MESSAGE_TEXT_WANTSAVSUB, MESSAGE_TITLE_QUESTION, MessageBoxButtons::YesNo, MessageBoxIcon::Question);
 	if (check == System::Windows::Forms::DialogResult::Cancel)
 		return;
 	if (check == System::Windows::Forms::DialogResult::Yes)
@@ -100,15 +100,13 @@ System::Void SettingForm::button_sett_addFolder_Click(System::Object^  sender, S
 
 	if (dataFolder == safeFolder || dataFolder == safeFolder+"+")
 	{
-		MessageBox::Show( MESSAGE_TEXT_ONEFOLNUSE, MESSAGE_TITLE_ERROR,
-			System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
+		MessageBox::Show( MESSAGE_TEXT_ONEFOLNUSE, MESSAGE_TITLE_ERROR, MessageBoxButtons::OK, MessageBoxIcon::Error);
 		return;
 	}
 
 	if (checkStack(safeFolder, safeStack))
 	{
-		MessageBox::Show( MESSAGE_TEXT_ALRASSAFE, MESSAGE_TITLE_ERROR,
-			System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
+		MessageBox::Show( MESSAGE_TEXT_ALRASSAFE, MESSAGE_TITLE_ERROR, MessageBoxButtons::OK, MessageBoxIcon::Error);
 		return;
 	}
 
@@ -116,7 +114,7 @@ System::Void SettingForm::button_sett_addFolder_Click(System::Object^  sender, S
 	listBox_sett_safe->Items->Add(safeFolder);
 	dataStack.push_back(dataFolder);
 	safeStack.push_back(safeFolder);
-	StreamWriter^ writeFile = gcnew StreamWriter(Application::StartupPath + FILE_CONFIG, true);
+	StreamWriter^ writeFile = gcnew StreamWriter(APP_START_DIR + FILE_CONFIG, true);
 	writeFile->WriteLine(dataFolder);
 	writeFile->WriteLine(safeFolder);
 	writeFile->Close();
@@ -126,13 +124,12 @@ System::Void SettingForm::button_sett_delete_Click(System::Object^  sender, Syst
 {
 	System::Windows::Forms::DialogResult check;
 
-	check = MessageBox::Show( MESSAGE_TEXT_LINK_DEL( listBox_sett_data->SelectedItem, listBox_sett_safe->SelectedItem ), MESSAGE_TITLE_ATTENTION,
-		System::Windows::Forms::MessageBoxButtons::OKCancel, System::Windows::Forms::MessageBoxIcon::Warning);
+	check = MessageBox::Show( MESSAGE_TEXT_LINK_DEL( listBox_sett_data->SelectedItem, listBox_sett_safe->SelectedItem ),
+		MESSAGE_TITLE_ATTENTION, MessageBoxButtons::OKCancel, MessageBoxIcon::Warning);
 	if (check == System::Windows::Forms::DialogResult::Cancel)
 		return;
 
-	check = MessageBox::Show( MESSAGE_TEXT_WANTDELLNK, MESSAGE_TITLE_QUESTION,
-	System::Windows::Forms::MessageBoxButtons::YesNo, System::Windows::Forms::MessageBoxIcon::Question);
+	check = MessageBox::Show( MESSAGE_TEXT_WANTDELLNK, MESSAGE_TITLE_QUESTION, MessageBoxButtons::YesNo, MessageBoxIcon::Question);
 	if (check == System::Windows::Forms::DialogResult::Yes)
 	{
 		panel_wait->Visible = true;
@@ -164,7 +161,7 @@ System::Void SettingForm::button_sett_delete_Click(System::Object^  sender, Syst
 	dataStack.erase(dataStack.begin() + buffIndex);
 	safeStack.erase(safeStack.begin() + buffIndex);
 
-	StreamWriter^ writeFile = gcnew StreamWriter(Application::StartupPath + FILE_CONFIG, false);
+	StreamWriter^ writeFile = gcnew StreamWriter(APP_START_DIR + FILE_CONFIG, false);
 	for (int iter = 0; iter < listBox_sett_data->Items->Count; iter++)
 	{
 		writeFile->WriteLine(listBox_sett_data->Items[iter]);
@@ -185,8 +182,7 @@ System::Void SettingForm::button_sett_addFile_Click(System::Object^  sender, Sys
 	{
 		if (checkStack(openFileDialog_sett_sellect->FileNames[iter]->ToString(), dataStack))
 		{
-			check = MessageBox::Show( MESSAGE_TEXT_FEXISTSAFE, MESSAGE_TITLE_ATTENTION,
-				System::Windows::Forms::MessageBoxButtons::OKCancel, System::Windows::Forms::MessageBoxIcon::Warning);
+			check = MessageBox::Show( MESSAGE_TEXT_FEXISTSAFE, MESSAGE_TITLE_ATTENTION, MessageBoxButtons::OKCancel, MessageBoxIcon::Warning);
 			if (check == System::Windows::Forms::DialogResult::Cancel)
 				return;
 		}
@@ -203,19 +199,17 @@ System::Void SettingForm::button_sett_addFile_Click(System::Object^  sender, Sys
 
 	if (openFileDialog_sett_sellect->FileNames[0] == safeDirect + openFileDialog_sett_sellect->SafeFileNames[0])
 	{
-		MessageBox::Show( MESSAGE_TEXT_DIRNFORDS, MESSAGE_TITLE_ERROR,
-			System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
+		MessageBox::Show( MESSAGE_TEXT_DIRNFORDS, MESSAGE_TITLE_ERROR, MessageBoxButtons::OK, MessageBoxIcon::Error);
 		return;
 	}
 
 	if (checkStack(safeDirect, safeStack))
 	{
-		MessageBox::Show( MESSAGE_TEXT_ALRASSAFE, MESSAGE_TITLE_ERROR,
-			System::Windows::Forms::MessageBoxButtons::OK, System::Windows::Forms::MessageBoxIcon::Error);
+		MessageBox::Show( MESSAGE_TEXT_ALRASSAFE, MESSAGE_TITLE_ERROR, MessageBoxButtons::OK, MessageBoxIcon::Error);
 		return;
 	}
 	
-	StreamWriter^ writeFile = gcnew StreamWriter(Application::StartupPath + FILE_CONFIG, true);
+	StreamWriter^ writeFile = gcnew StreamWriter(APP_START_DIR + FILE_CONFIG, true);
 	for (int iter = 0; iter < openFileDialog_sett_sellect->FileNames->Length; iter++)
 	{
 		listBox_sett_data->Items->Add(openFileDialog_sett_sellect->FileNames[iter]->ToString());
