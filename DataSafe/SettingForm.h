@@ -217,7 +217,7 @@ namespace DataSafe {
 #pragma endregion
 
 	public:
-		System::Drawing::Point startPoint;
+		System::Drawing::Point startPoint;	// position of form
 
 	private:
 		vector<String^> dataStack;
@@ -227,12 +227,14 @@ namespace DataSafe {
 	private: System::Void SettingForm_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e);
 	private: System::Void listBox_sett_data_SelectedValueChanged(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void listBox_sett_safe_SelectedValueChanged(System::Object^  sender, System::EventArgs^  e);
-	private: System::Void button_sett_back_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void listBox_sett_data_DoubleClick(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void listBox_sett_safe_DoubleClick(System::Object^  sender, System::EventArgs^  e);
+	private: System::Void button_sett_addFile_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void button_sett_addFolder_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void button_sett_delete_Click(System::Object^  sender, System::EventArgs^  e);
-	private: System::Void button_sett_addFile_Click(System::Object^  sender, System::EventArgs^  e);
-	private: bool checkStack(System::String^ item, vector<System::String^> stack);
+	private: System::Void button_sett_back_Click(System::Object^  sender, System::EventArgs^  e);
+
+	private:
+		bool checkStack(System::String^ item, vector<System::String^> stack);
 };
 }

@@ -15,7 +15,7 @@
 #define LABEL_ACTION_DEL_DATA	"Delete from Data"
 #define LABEL_ACTION_COPY_SAFE	"Copy from Safe"
 #define LABEL_ACTION_COPY_DATA	"Copy from Data"
-#define LABEL_PRICESSING		"Processing..."
+#define LABEL_PROCESSING		"Processing..."
 #define LABEL_BACK_CHECK		"<-- back check"
 #define LABEL_CHECK_DONE		"Checking Done!"
 #define LABEL_READY				"Ready..."

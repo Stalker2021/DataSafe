@@ -2,24 +2,26 @@
 
 using namespace System;
 
+// TODO: should be renamed to Calculation or something
 ref class CheckSize
 {
 public:
-	bool isRun();
-	void startProcess();
-	void stopProcess();
-	unsigned long long int getSize();
-
 	CheckSize(System::IO::StreamReader^ config, System::Windows::Forms::Label^ lable);
 
-private:
-	System::Threading::Thread^ checkDataSizeThread = nullptr;
-	System::Windows::Forms::Label^ sizeLable = nullptr;
-	System::IO::StreamReader^ configFile = nullptr;
-	bool inProgress = false;
-	unsigned long long int counter = 0;
+	void startProcess();
+	void stopProcess();
+	bool isRun();
+	unsigned long long int getSize();
 
+private:
 	void checkDataSize();
 	void checkSubFolderSize(System::String^ checkPath);
 	void putLableTextSize();
+
+private:
+	System::Threading::Thread^ checkDataSizeThread = nullptr;
+	System::Windows::Forms::Label^ sizeLable = nullptr;			//for indicate count of calculated files
+	System::IO::StreamReader^ configFile = nullptr;
+	bool inProgress = false;
+	unsigned long long int counter = 0;
 };

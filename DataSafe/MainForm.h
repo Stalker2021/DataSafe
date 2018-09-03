@@ -371,27 +371,31 @@ namespace DataSafe {
 
 		}
 
-	private: System::IO::StreamReader^ readFile;
-			 CheckSize^ checkSize;
-			 System::Threading::Thread^ checkDifferentThread = nullptr;
-			 System::Media::SoundPlayer^ sound_differenceFound = nullptr;
-			 System::Media::SoundPlayer^ sound_checkingDone = nullptr;
+	private: 
+		System::IO::StreamReader^ readFile;								// for read config file
+		CheckSize^ checkSize;											// for calculate files for save
+		System::Threading::Thread^ checkDifferentThread = nullptr;
+		System::Media::SoundPlayer^ sound_differenceFound = nullptr;
+		System::Media::SoundPlayer^ sound_checkingDone = nullptr;
 
 	private: System::Void MainForm_Load(System::Object^  sender, System::EventArgs^  e);
+	private: System::Void MainForm_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e);
+	private: System::Void label_processSize_MouseDoubleClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e);
 	private: System::Void button_edit_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void button_check_Click(System::Object^  sender, System::EventArgs^  e);
-	private: System::Void MainForm_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e);
+	private: System::Void panel_data_DoubleClick(System::Object^  sender, System::EventArgs^  e);
+	private: System::Void panel_safe_DoubleClick(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void button_eventData_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void button_eventSafe_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void button_skip_Click(System::Object^  sender, System::EventArgs^  e);
-	private: System::Void panel_data_DoubleClick(System::Object^  sender, System::EventArgs^  e);
-	private: System::Void panel_safe_DoubleClick(System::Object^  sender, System::EventArgs^  e);
-	private: System::Void eventButtonsDisable();
-	private: System::Void eventButtonsEnable(System::IO::FileInfo^ dataFile, System::String^ safePath);
-	private: System::Void eventButtonsEnable(System::String^ dataPath, System::IO::FileInfo^ safeFile);
-	private: System::Void eventButtonsEnable(System::IO::FileInfo^ dataFile, System::IO::FileInfo^ safeFile);
-	private: System::Void checkDifferences();
-	private: System::Void checkSubFolderDifferences(System::String^ dataPath, System::String^ safePath);
-	private: System::Void label_processSize_MouseDoubleClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e);
+
+	private:
+		System::Void eventButtonsDisable();
+		System::Void eventButtonsEnable(System::IO::FileInfo^ dataFile, System::String^ safePath);
+		System::Void eventButtonsEnable(System::String^ dataPath, System::IO::FileInfo^ safeFile);
+		System::Void eventButtonsEnable(System::IO::FileInfo^ dataFile, System::IO::FileInfo^ safeFile);
+		System::Void checkDifferences();
+		System::Void checkSubFolderDifferences(System::String^ dataPath, System::String^ safePath);
+		System::Void waitForDecision();
 };
 }
