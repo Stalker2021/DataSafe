@@ -303,77 +303,8 @@ System::Void MainForm::checkDifferences()
 			}
 
 			safeDirInfo = gcnew System::IO::DirectoryInfo(readFile->ReadLine());
-			for (int iter = 0; iter < dataDirInfo->GetFiles()->Length; iter++)
-			{
-				if (System::IO::File::Exists(safeDirInfo->ToString() + dataDirInfo->GetFiles()[iter]->ToString()))	//Checking file found
-				{
-					safeFileInfo = gcnew System::IO::FileInfo(safeDirInfo->ToString() + dataDirInfo->GetFiles()[iter]->ToString());
-					if (dataDirInfo->GetFiles()[iter]->Length != safeFileInfo->Length ||
-						dataDirInfo->GetFiles()[iter]->LastWriteTime != safeFileInfo->LastWriteTime)
-					{
-						if (checkBox_replaceAll->Checked)
-						{
-							File::Copy(dataDirInfo->GetFiles()[iter]->FullName, safeFileInfo->FullName, true);
-						}
-						else
-						{
-							eventButtonsEnable(dataDirInfo->GetFiles()[iter], safeFileInfo);
-							waitForDecision();
-						}
-					}
-				}
-				else	//Checking file is absent
-				{
-					if (checkBox_addAll->Checked)
-					{
-						File::Copy(dataDirInfo->GetFiles()[iter]->FullName, safeDirInfo->ToString() + dataDirInfo->GetFiles()[iter]->Name);
-					}
-					else
-					{
-						int checkDel = (int)(dataDirInfo->GetFiles()->Length);
-						eventButtonsEnable(dataDirInfo->GetFiles()[iter], safeDirInfo->ToString());
-						waitForDecision();
-
-						if (checkDel - 1 == dataDirInfo->GetFiles()->Length)
-							iter--;
-					}
-				}
-
-				// update progress bar
-				if (checkSize->getSize())
-				{
-					if (progressBar->Maximum < progressBar->Value + 1)
-						progressBar->Maximum++;
-					progressBar->Value++;
-					label_processSize->Text = MESSAGE_TEXT_PROGRESS(progressBar->Value.ToString(), progressBar->Maximum.ToString());
-				}
-			}
-
-			// back Checking
-			label_back_check->Text = LABEL_BACK_CHECK;
-			for (int iter = 0; iter < safeDirInfo->GetFiles()->Length; iter++)
-			{
-				label_file_names->Text = safeDirInfo->GetFiles()[iter]->ToString();
-
-				if (!System::IO::File::Exists(dataDirInfo->ToString() + safeDirInfo->GetFiles()[iter]))
-				{
-					if (checkBox_recoverAll->Checked)
-					{
-						File::Copy(safeDirInfo->GetFiles()[iter]->FullName, dataDirInfo->ToString() + safeDirInfo->GetFiles()[iter]->Name);
-					}
-					else
-					{
-						int checkDel = (int)(safeDirInfo->GetFiles()->Length);
-						eventButtonsEnable(dataDirInfo->ToString(), safeDirInfo->GetFiles()[iter]);
-						waitForDecision();
-
-						if (checkDel - 1 == safeDirInfo->GetFiles()->Length)
-							iter--;
-					}
-				}
-			}
-			label_file_names->Text = EMPTY_STRING;
-			label_back_check->Text = EMPTY_STRING;
+			checkFoldersDifferences(dataDirInfo, safeDirInfo);
+			backChecking(safeDirInfo, dataDirInfo);
 		}
 		else if (buffType == '+')	//if Checking folder with subfolders
 		{
@@ -398,43 +329,9 @@ System::Void MainForm::checkDifferences()
 			}
 
 			safeFileInfo = gcnew System::IO::FileInfo(readFile->ReadLine());
-			if (safeFileInfo->Exists)
-			{
-				if (dataFileInfo->Length != safeFileInfo->Length ||
-					dataFileInfo->LastWriteTime != safeFileInfo->LastWriteTime)
-				{
-					if (checkBox_replaceAll->Checked)
-					{
-						File::Copy(dataFileInfo->FullName, safeFileInfo->FullName, true);
-					}
-					else
-					{
-						eventButtonsEnable(dataFileInfo, safeFileInfo);
-						waitForDecision();
-					}
-				}
-			}
-			else
-			{
-				if (checkBox_addAll->Checked)
-				{
-					File::Copy(dataFileInfo->FullName, safeFileInfo->Directory->ToString() + "\\" + dataFileInfo->Name);
-				}
-				else
-				{
-					eventButtonsEnable(dataFileInfo, safeFileInfo->Directory->ToString() + "\\");
-					waitForDecision();
-				}
-			}
+			checkFilesDifferences(dataFileInfo, safeFileInfo);
 
-			// update progress bar
-			if (checkSize->getSize())
-			{
-				if (progressBar->Maximum < progressBar->Value + 1)
-					progressBar->Maximum++;
-				progressBar->Value++;
-				label_processSize->Text = MESSAGE_TEXT_PROGRESS( progressBar->Value.ToString(), progressBar->Maximum.ToString() );
-			}
+			progressBarCkeckingUpdate();
 		}
 	}
 
@@ -461,87 +358,96 @@ System::Void MainForm::checkSubFolderDifferences(System::String^ dataPath, Syste
 	if (safePath[safePath->Length - 1] != '/' && safePath[safePath->Length - 1] != '\\')
 		safePath += "\\";
 
-	System::IO::DirectoryInfo dataDirInfo(dataPath);
+	System::IO::DirectoryInfo^ dataDirInfo = gcnew System::IO::DirectoryInfo(dataPath);
 
 	//Checking subfolders in current folder
-	for (int iter = 0; iter < dataDirInfo.GetDirectories()->Length; iter++)
+	for (int iter = 0; iter < dataDirInfo->GetDirectories()->Length; iter++)
 	{
-		if (!System::IO::Directory::Exists(safePath + dataDirInfo.GetDirectories()[iter]->ToString() + "\\"))
-			System::IO::Directory::CreateDirectory(safePath + dataDirInfo.GetDirectories()[iter]->ToString() + "\\");
+		if (!System::IO::Directory::Exists(safePath + dataDirInfo->GetDirectories()[iter]->ToString() + "\\"))
+			System::IO::Directory::CreateDirectory(safePath + dataDirInfo->GetDirectories()[iter]->ToString() + "\\");
 
-		checkSubFolderDifferences(dataDirInfo.ToString() + dataDirInfo.GetDirectories()[iter]->ToString() + "\\", safePath + dataDirInfo.GetDirectories()[iter]->ToString() + "\\");
+		checkSubFolderDifferences(	dataDirInfo->ToString() + dataDirInfo->GetDirectories()[iter]->ToString() +"\\",
+									safePath + dataDirInfo->GetDirectories()[iter]->ToString() + "\\");
 	}
 
-	System::IO::FileInfo^ safeFileInfo;
+	//Checking curren folder
+	System::IO::DirectoryInfo^ safeDirInfo = gcnew System::IO::DirectoryInfo(safePath);
+	checkFoldersDifferences(dataDirInfo, safeDirInfo);
+	backChecking(dataDirInfo, safeDirInfo);
+}
 
-	//Checking files in current folder
-	for (int iter = 0; iter < dataDirInfo.GetFiles()->Length; iter++)
+/*Checking process of folders*/
+System::Void MainForm::checkFoldersDifferences(System::IO::DirectoryInfo^ dataDir, System::IO::DirectoryInfo^ safeDir)
+{
+	int checkDel;
+	System::IO::FileInfo^ safeFile;
+
+	for (int iter = 0; iter < dataDir->GetFiles()->Length; iter++)
 	{
-		if (System::IO::File::Exists(safePath + dataDirInfo.GetFiles()[iter]->ToString()))
+		checkDel = (int)(dataDir->GetFiles()->Length);
+		safeFile = gcnew System::IO::FileInfo(safeDir->ToString() + dataDir->GetFiles()[iter]->ToString());
+		checkFilesDifferences(dataDir->GetFiles()[iter], safeFile);
+
+		if (checkDel - 1 == dataDir->GetFiles()->Length)
+			iter--;
+
+		progressBarCkeckingUpdate();
+	}
+}
+
+/*Checking process of files*/
+System::Void MainForm::checkFilesDifferences(System::IO::FileInfo^ dataFile, System::IO::FileInfo^ safeFile)
+{
+	if (safeFile->Exists)
+	{
+		if (!isSameFiles(dataFile, safeFile))
 		{
-			safeFileInfo = gcnew System::IO::FileInfo(safePath + dataDirInfo.GetFiles()[iter]->ToString());
-			if (dataDirInfo.GetFiles()[iter]->Length != safeFileInfo->Length ||
-				dataDirInfo.GetFiles()[iter]->LastWriteTime != safeFileInfo->LastWriteTime)
+			if (checkBox_replaceAll->Checked)
 			{
-				if (checkBox_replaceAll->Checked)
-				{
-					File::Copy(dataDirInfo.GetFiles()[iter]->FullName, safeFileInfo->FullName, true);
-				}
-				else
-				{
-					eventButtonsEnable(dataDirInfo.GetFiles()[iter], safeFileInfo);
-					waitForDecision();
-				}
+				File::Copy(dataFile->FullName, safeFile->FullName, true);
 			}
+			else
+			{
+				eventButtonsEnable(dataFile, safeFile);
+				waitForDecision();
+			}
+		}
+	}
+	else
+	{
+		if (checkBox_addAll->Checked)
+		{
+			File::Copy(dataFile->FullName, safeFile->Directory->ToString() + "\\" + dataFile->Name);
 		}
 		else
 		{
-			if (checkBox_addAll->Checked)
-			{
-				File::Copy(dataDirInfo.GetFiles()[iter]->FullName, safePath + dataDirInfo.GetFiles()[iter]->Name);
-			}
-			else
-			{
-				int checkDel = (int)(dataDirInfo.GetFiles()->Length);
-				eventButtonsEnable(dataDirInfo.GetFiles()[iter], safePath);
-				waitForDecision();
-
-				if (checkDel - 1 == dataDirInfo.GetFiles()->Length)
-				{
-					iter--;
-				}
-			}
-		}
-
-		// update progress bar
-		if (checkSize->getSize())
-		{
-			if (progressBar->Maximum < progressBar->Value + 1)
-				progressBar->Maximum++;
-			progressBar->Value++;
-			label_processSize->Text = MESSAGE_TEXT_PROGRESS( progressBar->Value.ToString(), progressBar->Maximum.ToString() );
+			eventButtonsEnable(dataFile, safeFile->Directory->ToString() + "\\");
+			waitForDecision();
 		}
 	}
+}
 
-	// back Checking
+/*Checking existing files from SaveDir to DataDir*/
+System::Void MainForm::backChecking(System::IO::DirectoryInfo^ dataDir, System::IO::DirectoryInfo^ safeDir)
+{
 	label_back_check->Text = LABEL_BACK_CHECK;
-	System::IO::DirectoryInfo safeDirInfo(safePath);
-	for (int iter = 0; iter < safeDirInfo.GetFiles()->Length; iter++)
+	for (int iter = 0; iter < safeDir->GetFiles()->Length; iter++)
 	{
-		label_file_names->Text = safeDirInfo.GetFiles()[iter]->ToString();
-		if (!System::IO::File::Exists(dataDirInfo.ToString() + safeDirInfo.GetFiles()[iter]))
+		label_file_names->Text = safeDir->GetFiles()[iter]->ToString();
+
+		if (!System::IO::File::Exists(dataDir->ToString() + safeDir->GetFiles()[iter]))
 		{
 			if (checkBox_recoverAll->Checked)
 			{
-				File::Copy(safeDirInfo.GetFiles()[iter]->FullName, dataDirInfo.ToString() + safeDirInfo.GetFiles()[iter]->Name);
+				File::Copy(safeDir->GetFiles()[iter]->FullName, dataDir->ToString() + safeDir->GetFiles()[iter]->Name);
 			}
 			else
 			{
-				int checkDel = (int)(safeDirInfo.GetFiles()->Length);
-				eventButtonsEnable(dataPath, safeDirInfo.GetFiles()[iter]);
+				int checkDel = (int)(safeDir->GetFiles()->Length);
+				eventButtonsEnable(dataDir->ToString(), safeDir->GetFiles()[iter]);
 				waitForDecision();
 
-				if (checkDel - 1 == safeDirInfo.GetFiles()->Length)
+				if (checkDel - 1 == safeDir->GetFiles()->Length)
 					iter--;
 			}
 		}
@@ -555,4 +461,22 @@ System::Void MainForm::waitForDecision()
 {
 	while (button_skip->Enabled)
 		checkDifferentThread->Sleep(250);
+}
+
+/*Continue indication of checking on progressBar*/
+System::Void MainForm::progressBarCkeckingUpdate()
+{
+	if (checkSize->getSize())
+	{
+		if (progressBar->Maximum < progressBar->Value + 1)
+			progressBar->Maximum++;
+		progressBar->Value++;
+		label_processSize->Text = MESSAGE_TEXT_PROGRESS(progressBar->Value.ToString(), progressBar->Maximum.ToString());
+	}
+}
+
+/*Checking files similarity*/
+System::Boolean MainForm::isSameFiles(System::IO::FileInfo^ file1, System::IO::FileInfo^ file2)
+{
+	return file1->Length == file2->Length && file1->LastWriteTime == file2->LastWriteTime;
 }

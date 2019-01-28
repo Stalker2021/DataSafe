@@ -396,6 +396,11 @@ namespace DataSafe {
 		System::Void eventButtonsEnable(System::IO::FileInfo^ dataFile, System::IO::FileInfo^ safeFile);
 		System::Void checkDifferences();
 		System::Void checkSubFolderDifferences(System::String^ dataPath, System::String^ safePath);
+		System::Void checkFoldersDifferences(System::IO::DirectoryInfo^ dataDir, System::IO::DirectoryInfo^ safeDir);
+		System::Void checkFilesDifferences(System::IO::FileInfo^ dataFile, System::IO::FileInfo^ safeFile);
+		System::Void backChecking(System::IO::DirectoryInfo^ dataDir, System::IO::DirectoryInfo^ safeDir);
 		System::Void waitForDecision();
+		System::Void progressBarCkeckingUpdate();
+		System::Boolean isSameFiles(System::IO::FileInfo^ dataFile, System::IO::FileInfo^ safeFile);
 };
 }
