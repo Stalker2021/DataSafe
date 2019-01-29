@@ -304,7 +304,7 @@ System::Void MainForm::checkDifferences()
 
 			safeDirInfo = gcnew System::IO::DirectoryInfo(readFile->ReadLine());
 			checkFoldersDifferences(dataDirInfo, safeDirInfo);
-			backChecking(safeDirInfo, dataDirInfo);
+			backChecking(dataDirInfo, safeDirInfo);
 		}
 		else if (buffType == '+')	//if Checking folder with subfolders
 		{
