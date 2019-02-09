@@ -4,3 +4,4 @@ Release/
 *.exe
 *.metagen
 *.pdb
+!release_build/*.exe

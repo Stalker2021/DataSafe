@@ -3,7 +3,7 @@
 using DataSafe::MainForm;
 
 [System::STAThread]
-int main()
+int WinMain()
 {
 	MainForm^ window = gcnew MainForm();
 	window->ShowDialog();
